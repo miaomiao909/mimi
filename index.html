@@ -1,0 +1,1705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>奶茶DIY - 解锁你的隐藏奶茶人格</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: #fff5f7;
+            color: #5a3921;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            position: relative;
+        }
+        
+        section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 紧凑型设计 */
+        .compact-section {
+            padding: 30px 20px;
+            justify-content: flex-start;
+            min-height: auto;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        
+        .compact-section:not(:last-child) {
+            border-bottom: 2px dashed #ffccd5;
+        }
+        
+        /* 奶茶冒泡背景动画 */
+        .bubble-bg {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background-color: rgba(255, 182, 193, 0.2);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-120vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        /* 动态弹窗样式 */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup {
+            background-color: #fff;
+            border-radius: 20px;
+            padding: 40px 30px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .popup-overlay.active .popup {
+            transform: scale(1);
+        }
+        
+        .popup h2 {
+            color: #ff6b8b;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .popup p {
+            color: #5a3921;
+            font-size: 18px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .popup-btn {
+            background: linear-gradient(to right, #ff6b8b, #ff8e53);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(255, 107, 139, 0.4);
+        }
+        
+        .popup-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 139, 0.6);
+        }
+        
+        /* 页面标题样式 - 更紧凑 */
+        .section-title {
+            font-size: 32px;
+            color: #ff6b8b;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #ff6b8b, #ff8e53);
+            border-radius: 2px;
+        }
+        
+        .section-subtitle {
+            font-size: 18px;
+            color: #8b4513;
+            margin-bottom: 25px;
+            text-align: center;
+            max-width: 90%;
+            line-height: 1.6;
+        }
+        
+        /* 杯型选择部分 - 更紧凑 */
+        .cup-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .cup-option {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px 15px;
+            width: 160px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cup-option:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #ff6b8b, #ff8e53);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cup-option:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .cup-option:hover:before {
+            opacity: 1;
+        }
+        
+        .cup-option.selected {
+            border-color: #ff6b8b;
+            background-color: #fff5f7;
+        }
+        
+        .cup-option.selected:before {
+            opacity: 1;
+        }
+        
+        .cup-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+            color: #ff8e53;
+        }
+        
+        .cup-size {
+            font-size: 14px;
+            color: #8b4513;
+            margin-top: 5px;
+        }
+        
+        /* 茶底选择部分 - 更紧凑 */
+        .tea-slider-container {
+            width: 90%;
+            max-width: 600px;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .tea-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        
+        .tea-option {
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            margin: 0 8px;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border: 2px solid transparent;
+        }
+        
+        .tea-option.active {
+            background-color: #e6f7ee;
+            color: #2e8b57;
+            transform: scale(1.05);
+            border-color: #2e8b57;
+        }
+        
+        .tea-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            color: #2e8b57;
+        }
+        
+        .tea-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .tea-desc {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* 滑动条样式 */
+        .slider-container {
+            position: relative;
+            height: 50px;
+            background: linear-gradient(to right, #8b4513, #2e8b57, #4a90e2);
+            border-radius: 25px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .slider-track {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+        }
+        
+        .slider-dot {
+            width: 45px;
+            height: 45px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        .slider-dot.active {
+            transform: scale(1.2);
+            background-color: #ff6b8b;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 107, 139, 0.5);
+        }
+        
+        /* 配料选择部分 - 更紧凑 */
+        .toppings-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            max-width: 800px;
+        }
+        
+        .topping {
+            background-color: white;
+            border-radius: 12px;
+            padding: 15px;
+            width: 140px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid transparent;
+        }
+        
+        .topping:hover {
+            transform: translateY(-5px);
+            border-color: #ffccd5;
+        }
+        
+        .topping-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .topping:hover .topping-icon {
+            transform: scale(1.2);
+        }
+        
+        .topping-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 8px;
+        }
+        
+        .topping-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background-color: #ff6b8b;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .topping-btn:hover {
+            background-color: #ff8e53;
+            transform: scale(1.1);
+        }
+        
+        .topping-count {
+            margin: 0 12px;
+            font-size: 18px;
+            font-weight: bold;
+            min-width: 25px;
+            text-align: center;
+            color: #5a3921;
+        }
+        
+        /* 糖度和冰度选择 - 更紧凑 */
+        .options-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .option-group {
+            background-color: white;
+            border-radius: 15px;
+            padding: 20px;
+            width: 280px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fff0f5;
+        }
+        
+        .option-title {
+            font-size: 22px;
+            color: #ff6b8b;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .option-buttons {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .option-btn {
+            padding: 10px 12px;
+            border: 2px solid #ffccd5;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .option-btn.active {
+            background-color: #ff6b8b;
+            color: white;
+            border-color: #ff6b8b;
+        }
+        
+        /* 命名环节 - 更紧凑 */
+        .naming-container {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            border: 2px solid #fff0f5;
+        }
+        
+        .name-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #ffccd5;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .name-input:focus {
+            outline: none;
+            border-color: #ff6b8b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 139, 0.2);
+        }
+        
+        .suffix-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        
+        .suffix-btn {
+            padding: 8px 15px;
+            background-color: #fff5f7;
+            border: 2px solid #ffccd5;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .suffix-btn:hover {
+            background-color: #ffccd5;
+            transform: translateY(-2px);
+        }
+        
+        /* 推荐搭配 - 更紧凑 */
+        .recommendation {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: center;
+            border: 2px solid #fff0f5;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .recommendation:before {
+            content: "✨";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            animation: sparkle 2s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .recommendation h3 {
+            color: #ff6b8b;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .recommendation p {
+            font-size: 16px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            color: #5a3921;
+        }
+        
+        /* 奶茶身份证 - 更紧凑 */
+        .id-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #ffccd5;
+        }
+        
+        .id-header {
+            background: linear-gradient(to right, #ff6b8b, #ff8e53);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            border-radius: 12px 12px 0 0;
+            margin: -25px -25px 20px -25px;
+        }
+        
+        .id-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .id-label {
+            font-weight: bold;
+            color: #5a3921;
+            font-size: 14px;
+        }
+        
+        .id-value {
+            color: #8b4513;
+            font-size: 14px;
+        }
+        
+        .personality-tag {
+            display: inline-block;
+            padding: 8px 15px;
+            background: linear-gradient(to right, #ffccd5, #ffb6c1);
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+            color: #ff6b8b;
+            font-size: 16px;
+        }
+        
+        /* 好友挑战 - 更紧凑 */
+        .challenge {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            width: 90%;
+            max-width: 550px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            text-align: center;
+            border: 2px solid #fff0f5;
+        }
+        
+        .share-btn {
+            background: linear-gradient(to right, #4a90e2, #2e8b57);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 144, 226, 0.4);
+        }
+        
+        /* 导航指示器 */
+        .nav-dots {
+            position: fixed;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+        }
+        
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ffccd5;
+            margin: 12px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .nav-dot.active {
+            background-color: #ff6b8b;
+            transform: scale(1.3);
+        }
+        
+        .nav-dot:hover:before {
+            content: attr(data-title);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ff6b8b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 101;
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(to right, #ff6b8b, #ff8e53);
+            width: 0%;
+            z-index: 101;
+            transition: width 0.3s ease;
+        }
+        
+        /* 小巧思：浮动小元素 */
+        .floating-element {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.7;
+            animation: floatElement 6s infinite ease-in-out;
+            pointer-events: none;
+        }
+        
+        @keyframes floatElement {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+        
+        /* 小巧思：已选择显示条 */
+        .selection-bar {
+            background-color: white;
+            border-radius: 10px;
+            padding: 12px 20px;
+            margin-top: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .selection-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .selection-icon {
+            color: #ff6b8b;
+            font-size: 18px;
+        }
+        
+        /* 小巧思：步骤指示器 */
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ffccd5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #5a3921;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .step.active {
+            background-color: #ff6b8b;
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .step-line {
+            width: 30px;
+            height: 2px;
+            background-color: #ffccd5;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 28px;
+            }
+            
+            .cup-options {
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .cup-option {
+                width: 90%;
+                max-width: 280px;
+            }
+            
+            .options-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .option-group {
+                width: 90%;
+            }
+            
+            .nav-dots {
+                display: none;
+            }
+            
+            .selection-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            
+            .step-indicator {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 进度条 -->
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- 动态弹窗 -->
+    <div class="popup-overlay active" id="popupOverlay">
+        <div class="popup">
+            <h2>点击解锁你的隐藏奶茶人格</h2>
+            <p>来调一杯只属于你的神仙奶茶</p>
+            <button class="popup-btn" id="popupBtn">开启奶茶DIY之旅</button>
+        </div>
+    </div>
+    
+    <!-- 导航指示器 -->
+    <div class="nav-dots" id="navDots">
+        <!-- 通过JS动态生成 -->
+    </div>
+    
+    <!-- 奶茶冒泡背景 -->
+    <div class="bubble-bg" id="bubbleBg"></div>
+    
+    <!-- 浮动小元素 -->
+    <div class="floating-element" style="top: 10%; left: 5%;">🥤</div>
+    <div class="floating-element" style="top: 20%; right: 8%; animation-delay: 1s;">🧋</div>
+    <div class="floating-element" style="top: 40%; left: 7%; animation-delay: 2s;">🍵</div>
+    <div class="floating-element" style="top: 60%; right: 5%; animation-delay: 3s;">⚫</div>
+    <div class="floating-element" style="top: 80%; left: 10%; animation-delay: 4s;">🟣</div>
+    <div class="floating-element" style="top: 30%; right: 15%; animation-delay: 5s;">🍶</div>
+    
+    <!-- 主容器 -->
+    <div class="container" id="mainContainer">
+        <!-- 第1页：欢迎页 -->
+        <section id="page1" class="compact-section">
+            <div style="text-align: center;">
+                <h1 class="section-title">奶茶DIY个性工坊</h1>
+                <p class="section-subtitle">滑动解锁你的隐藏奶茶人格，定制专属神仙奶茶</p>
+                
+                <!-- 步骤指示器 -->
+                <div class="step-indicator">
+                    <div class="step active">1</div>
+                    <div class="step-line"></div>
+                    <div class="step">2</div>
+                    <div class="step-line"></div>
+                    <div class="step">3</div>
+                    <div class="step-line"></div>
+                    <div class="step">4</div>
+                    <div class="step-line"></div>
+                    <div class="step">5</div>
+                    <div class="step-line"></div>
+                    <div class="step">6</div>
+                    <div class="step-line"></div>
+                    <div class="step">7</div>
+                    <div class="step-line"></div>
+                    <div class="step">8</div>
+                </div>
+                
+                <!-- 已选择显示条 -->
+                <div class="selection-bar">
+                    <div class="selection-item">
+                        <i class="fas fa-mug-hot selection-icon"></i>
+                        <span>杯型: <strong id="selectedCupDisplay">中杯</strong></span>
+                    </div>
+                    <div class="selection-item">
+                        <i class="fas fa-leaf selection-icon"></i>
+                        <span>茶底: <strong id="selectedTeaDisplay">红茶</strong></span>
+                    </div>
+                    <div class="selection-item">
+                        <i class="fas fa-cubes selection-icon"></i>
+                        <span>配料: <strong id="selectedToppingsDisplay">珍珠(中)等</strong></span>
+                    </div>
+                    <div class="selection-item">
+                        <i class="fas fa-snowflake selection-icon"></i>
+                        <span>糖冰: <strong id="selectedSugarIceDisplay">无糖/去冰</strong></span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; font-size: 20px; color: #ff6b8b;">
+                    <i class="fas fa-arrow-down" style="animation: bounce 2s infinite;"></i>
+                    <p style="margin-top: 10px;">向下滑动开始制作</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第2页：杯型选择 -->
+        <section id="page2" class="compact-section">
+            <h2 class="section-title">第一步：选择你的杯型</h2>
+            <p class="section-subtitle">不同的杯型代表不同的奶茶态度，你属于哪一种？</p>
+            
+            <div class="cup-options">
+                <div class="cup-option" data-cup="u型">
+                    <div class="cup-icon">🥤</div>
+                    <h3>U型杯</h3>
+                    <p>时尚达人必备</p>
+                    <div class="cup-size">容量：500ml</div>
+                </div>
+                
+                <div class="cup-option selected" data-cup="中杯">
+                    <div class="cup-icon">🧋</div>
+                    <h3>经典中杯</h3>
+                    <p>恰到好处的满足</p>
+                    <div class="cup-size">容量：400ml</div>
+                </div>
+                
+                <div class="cup-option" data-cup="大杯">
+                    <div class="cup-icon">🍶</div>
+                    <h3>超大杯</h3>
+                    <p>快乐加倍享受</p>
+                    <div class="cup-size">容量：700ml</div>
+                </div>
+            </div>
+            
+            <div class="selection-bar" style="margin-top: 25px;">
+                <div class="selection-item">
+                    <i class="fas fa-check-circle" style="color: #2e8b57;"></i>
+                    <span>已选择：<strong id="selectedCup">中杯</strong></span>
+                </div>
+                <div class="selection-item">
+                    <i class="fas fa-info-circle" style="color: #4a90e2;"></i>
+                    <span>点击杯型查看更多信息</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第3页：茶底选择 -->
+        <section id="page3" class="compact-section">
+            <h2 class="section-title">第二步：选择茶底</h2>
+            <p class="section-subtitle">滑动切换茶底，每种茶底都有独特的风味</p>
+            
+            <div class="tea-slider-container">
+                <div class="slider-container">
+                    <div class="slider-track" id="sliderTrack">
+                        <div class="slider-dot active" data-tea="红茶">红茶</div>
+                        <div class="slider-dot" data-tea="绿茶">绿茶</div>
+                        <div class="slider-dot" data-tea="乌龙茶">乌龙茶</div>
+                    </div>
+                </div>
+                
+                <div class="tea-options">
+                    <div class="tea-option active" data-tea="红茶">
+                        <div class="tea-icon">🫖</div>
+                        <div class="tea-name">红茶</div>
+                        <div class="tea-desc">浓郁醇厚，经典之选</div>
+                    </div>
+                    
+                    <div class="tea-option" data-tea="绿茶">
+                        <div class="tea-icon">🍵</div>
+                        <div class="tea-name">绿茶</div>
+                        <div class="tea-desc">清新爽口，自然香气</div>
+                    </div>
+                    
+                    <div class="tea-option" data-tea="乌龙茶">
+                        <div class="tea-icon">🫖</div>
+                        <div class="tea-name">乌龙茶</div>
+                        <div class="tea-desc">香气独特，回味悠长</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="selection-bar" style="margin-top: 25px;">
+                <div class="selection-item">
+                    <i class="fas fa-check-circle" style="color: #2e8b57;"></i>
+                    <span>已选择茶底：<strong id="selectedTea">红茶</strong></span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第4页：配料添加 -->
+        <section id="page4" class="compact-section">
+            <h2 class="section-title">第三步：添加配料</h2>
+            <p class="section-subtitle">点击配料调整数量，打造你的专属口感层次</p>
+            
+            <div class="toppings-container">
+                <div class="topping" data-topping="珍珠">
+                    <div class="topping-icon">⚫</div>
+                    <h3>黑糖珍珠</h3>
+                    <p>Q弹有嚼劲</p>
+                    <div class="topping-controls">
+                        <button class="topping-btn minus">-</button>
+                        <div class="topping-count">中</div>
+                        <button class="topping-btn plus">+</button>
+                    </div>
+                </div>
+                
+                <div class="topping" data-topping="芋圆">
+                    <div class="topping-icon">🟣</div>
+                    <h3>紫薯芋圆</h3>
+                    <p>软糯香甜</p>
+                    <div class="topping-controls">
+                        <button class="topping-btn minus">-</button>
+                        <div class="topping-count">少</div>
+                        <button class="topping-btn plus">+</button>
+                    </div>
+                </div>
+                
+                <div class="topping" data-topping="脆波波">
+                    <div class="topping-icon">⚪</div>
+                    <h3>水晶脆波波</h3>
+                    <p>爽脆口感</p>
+                    <div class="topping-controls">
+                        <button class="topping-btn minus">-</button>
+                        <div class="topping-count">少</div>
+                        <button class="topping-btn plus">+</button>
+                    </div>
+                </div>
+                
+                <div class="topping" data-topping="椰果">
+                    <div class="topping-icon">🟡</div>
+                    <h3>黄金椰果</h3>
+                    <p>清甜爽口</p>
+                    <div class="topping-controls">
+                        <button class="topping-btn minus">-</button>
+                        <div class="topping-count">中</div>
+                        <button class="topping-btn plus">+</button>
+                    </div>
+                </div>
+                
+                <div class="topping" data-topping="布丁">
+                    <div class="topping-icon">🟠</div>
+                    <h3>焦糖布丁</h3>
+                    <p>滑嫩香甜</p>
+                    <div class="topping-controls">
+                        <button class="topping-btn minus">-</button>
+                        <div class="topping-count">无</div>
+                        <button class="topping-btn plus">+</button>
+                    </div>
+                </div>
+                
+                <div class="topping" data-topping="奶盖">
+                    <div class="topping-icon">⬜</div>
+                    <h3>芝士奶盖</h3>
+                    <p>咸香浓郁</p>
+                    <div class="topping-controls">
+                        <button class="topping-btn minus">-</button>
+                        <div class="topping-count">无</div>
+                        <button class="topping-btn plus">+</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="selection-bar" style="margin-top: 25px;">
+                <div class="selection-item">
+                    <i class="fas fa-check-circle" style="color: #2e8b57;"></i>
+                    <span>配料选择：<strong id="selectedToppings">珍珠(中)、芋圆(少)、脆波波(少)、椰果(中)</strong></span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第5页：糖度冰度选择 -->
+        <section id="page5" class="compact-section">
+            <h2 class="section-title">第四步：糖度与冰度</h2>
+            <p class="section-subtitle">调节甜度与温度，找到你的最佳口感平衡点</p>
+            
+            <div class="options-container">
+                <div class="option-group">
+                    <h3 class="option-title">糖度选择</h3>
+                    <div class="option-buttons">
+                        <div class="option-btn active" data-sugar="无糖">无糖</div>
+                        <div class="option-btn" data-sugar="少糖">少糖</div>
+                        <div class="option-btn" data-sugar="半糖">半糖</div>
+                        <div class="option-btn" data-sugar="正常糖">正常糖</div>
+                    </div>
+                </div>
+                
+                <div class="option-group">
+                    <h3 class="option-title">冰度选择</h3>
+                    <div class="option-buttons">
+                        <div class="option-btn active" data-ice="去冰">去冰</div>
+                        <div class="option-btn" data-ice="少冰">少冰</div>
+                        <div class="option-btn" data-ice="正常冰">正常冰</div>
+                        <div class="option-btn" data-ice="多冰">多冰</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="selection-bar" style="margin-top: 25px;">
+                <div class="selection-item">
+                    <i class="fas fa-check-circle" style="color: #2e8b57;"></i>
+                    <span>已选择：<strong id="selectedSugarIce">糖度：无糖，冰度：去冰</strong></span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第6页：命名环节 -->
+        <section id="page6" class="compact-section">
+            <h2 class="section-title">第五步：命名你的奶茶</h2>
+            <p class="section-subtitle">为你的专属奶茶取一个有趣的名字吧</p>
+            
+            <div class="naming-container">
+                <input type="text" class="name-input" id="milkTeaName" placeholder="输入你的奶茶名字，例如：春日樱花奶茶">
+                <p style="margin-bottom: 15px; color: #666; font-size: 14px;">或者选择系统推荐后缀：</p>
+                
+                <div class="suffix-options">
+                    <div class="suffix-btn" data-suffix="芋泥脑袋限定款">芋泥脑袋限定款</div>
+                    <div class="suffix-btn" data-suffix="多肉葡萄YYDS">多肉葡萄YYDS</div>
+                    <div class="suffix-btn" data-suffix="黑糖波波传奇">黑糖波波传奇</div>
+                    <div class="suffix-btn" data-suffix="芝士奶盖天花板">芝士奶盖天花板</div>
+                    <div class="suffix-btn" data-suffix="仙气飘飘限定">仙气飘飘限定</div>
+                </div>
+                
+                <div class="selection-bar" style="margin-top: 20px;">
+                    <div class="selection-item">
+                        <i class="fas fa-mug-hot" style="color: #ff6b8b;"></i>
+                        <span>你的奶茶全名：<strong id="fullMilkTeaName">春日樱花奶茶</strong></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 第7页：精选推荐 -->
+        <section id="page7" class="compact-section">
+            <h2 class="section-title">第六步：精选推荐搭配</h2>
+            <p class="section-subtitle">不知道如何搭配？试试我们的招牌推荐</p>
+            
+            <div class="recommendation">
+                <h3>桂花牛乳茶</h3>
+                <p>配方：中杯 + 乌龙茶底 + 桂花冻(多) + 脆波波(少) + 少糖 + 去冰</p>
+                <p>口感描述：清雅的桂花香气与醇厚牛乳完美融合，搭配Q弹的桂花冻和爽脆的脆波波，每一口都是秋日浪漫。</p>
+                <button class="popup-btn" id="applyRecommendation" style="margin-top: 15px; padding: 12px 30px; font-size: 18px;">一键应用此配方</button>
+            </div>
+            
+            <div style="margin-top: 20px; color: #8b4513; font-size: 16px; text-align: center;">
+                <p>你也可以继续使用自己的配方</p>
+            </div>
+        </section>
+        
+        <!-- 第8页：奶茶身份证与分享 -->
+        <section id="page8" class="compact-section" style="border-bottom: none;">
+            <h2 class="section-title">你的奶茶身份证</h2>
+            <p class="section-subtitle">生成专属海报，分享你的神仙配方</p>
+            
+            <div class="id-card">
+                <div class="id-header">
+                    <h2>奶茶身份证</h2>
+                    <p>专属定制·唯一编号: MT<span id="milkTeaId">20230527</span></p>
+                </div>
+                
+                <div class="id-content">
+                    <div class="id-label">奶茶名称：</div>
+                    <div class="id-value" id="idName">春日樱花奶茶</div>
+                    
+                    <div class="id-label">杯型：</div>
+                    <div class="id-value" id="idCup">中杯</div>
+                    
+                    <div class="id-label">茶底：</div>
+                    <div class="id-value" id="idTea">红茶</div>
+                    
+                    <div class="id-label">配料：</div>
+                    <div class="id-value" id="idToppings">珍珠(中)、芋圆(少)、脆波波(少)、椰果(中)</div>
+                    
+                    <div class="id-label">糖度/冰度：</div>
+                    <div class="id-value" id="idSugarIce">无糖 / 去冰</div>
+                    
+                    <div class="id-label">人格标签：</div>
+                    <div class="id-value">
+                        <div class="personality-tag" id="personalityTag">精致生活家</div>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; font-style: italic; color: #666; margin-top: 15px; font-size: 14px;">“这杯奶茶，写满了你的个性与品味”</p>
+            </div>
+            
+            <div class="challenge">
+                <h3>好友挑战</h3>
+                <p>敢不敢复刻我的神仙配方？分享你的奶茶身份证，看看谁能做出最还原的版本！</p>
+                <button class="share-btn" id="shareBtn">
+                    <i class="fas fa-share-alt"></i> 一键生成分享文案
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 生成奶茶冒泡
+            createBubbles();
+            
+            // 初始化导航点
+            initNavDots();
+            
+            // 初始化事件监听
+            initEventListeners();
+            
+            // 初始化滚动监听
+            initScrollListener();
+            
+            // 初始化步骤指示器
+            initStepIndicator();
+            
+            // 关闭弹窗
+            document.getElementById('popupBtn').addEventListener('click', function() {
+                document.getElementById('popupOverlay').classList.remove('active');
+                // 滚动到第一页
+                document.getElementById('page1').scrollIntoView({behavior: 'smooth'});
+            });
+        });
+        
+        // 生成奶茶冒泡
+        function createBubbles() {
+            const bubbleBg = document.getElementById('bubbleBg');
+            const colors = ['rgba(255, 182, 193, 0.3)', 'rgba(255, 105, 180, 0.2)', 'rgba(255, 192, 203, 0.25)'];
+            
+            for (let i = 0; i < 25; i++) {
+                const bubble = document.createElement('div');
+                bubble.classList.add('bubble');
+                
+                // 随机大小
+                const size = Math.random() * 60 + 20;
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                
+                // 随机位置
+                bubble.style.left = `${Math.random() * 100}%`;
+                
+                // 随机颜色
+                bubble.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                // 随机动画延迟和持续时间
+                const delay = Math.random() * 15;
+                const duration = Math.random() * 10 + 15;
+                bubble.style.animationDelay = `${delay}s`;
+                bubble.style.animationDuration = `${duration}s`;
+                
+                bubbleBg.appendChild(bubble);
+            }
+        }
+        
+        // 初始化导航点
+        function initNavDots() {
+            const navDots = document.getElementById('navDots');
+            const sections = document.querySelectorAll('section');
+            const pageTitles = [
+                "开始制作", "选择杯型", "选择茶底", "添加配料", 
+                "糖度冰度", "命名奶茶", "推荐搭配", "生成分享"
+            ];
+            
+            sections.forEach((section, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('nav-dot');
+                dot.setAttribute('data-title', pageTitles[index]);
+                if (index === 0) dot.classList.add('active');
+                
+                dot.addEventListener('click', () => {
+                    section.scrollIntoView({behavior: 'smooth'});
+                });
+                
+                navDots.appendChild(dot);
+            });
+        }
+        
+        // 初始化步骤指示器
+        function initStepIndicator() {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                step.addEventListener('click', () => {
+                    const sectionId = `page${index + 1}`;
+                    document.getElementById(sectionId).scrollIntoView({behavior: 'smooth'});
+                });
+            });
+        }
+        
+        // 初始化事件监听
+        function initEventListeners() {
+            // 杯型选择
+            document.querySelectorAll('.cup-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    document.querySelectorAll('.cup-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // 添加当前选中状态
+                    this.classList.add('selected');
+                    
+                    // 更新显示
+                    const selectedCup = this.getAttribute('data-cup');
+                    document.getElementById('selectedCup').textContent = selectedCup;
+                    document.getElementById('selectedCupDisplay').textContent = selectedCup;
+                    document.getElementById('idCup').textContent = selectedCup;
+                    
+                    // 更新人格标签
+                    updatePersonalityTag();
+                    updateStepIndicator(2);
+                });
+            });
+            
+            // 茶底选择
+            document.querySelectorAll('.slider-dot').forEach(dot => {
+                dot.addEventListener('click', function() {
+                    // 移除所有激活状态
+                    document.querySelectorAll('.slider-dot').forEach(d => {
+                        d.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tea-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    
+                    // 添加当前激活状态
+                    this.classList.add('active');
+                    const teaType = this.getAttribute('data-tea');
+                    
+                    // 激活对应的茶底选项
+                    document.querySelector(`.tea-option[data-tea="${teaType}"]`).classList.add('active');
+                    
+                    // 更新显示
+                    document.getElementById('selectedTea').textContent = teaType;
+                    document.getElementById('selectedTeaDisplay').textContent = teaType;
+                    document.getElementById('idTea').textContent = teaType;
+                    
+                    // 更新人格标签
+                    updatePersonalityTag();
+                    updateStepIndicator(3);
+                });
+            });
+            
+            // 配料数量调整
+            document.querySelectorAll('.topping').forEach(topping => {
+                const minusBtn = topping.querySelector('.minus');
+                const plusBtn = topping.querySelector('.plus');
+                const countDisplay = topping.querySelector('.topping-count');
+                
+                const levels = ['无', '少', '中', '多'];
+                let currentIndex = levels.indexOf(countDisplay.textContent);
+                
+                minusBtn.addEventListener('click', function() {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        countDisplay.textContent = levels[currentIndex];
+                        updateToppingsDisplay();
+                        updateStepIndicator(4);
+                    }
+                });
+                
+                plusBtn.addEventListener('click', function() {
+                    if (currentIndex < levels.length - 1) {
+                        currentIndex++;
+                        countDisplay.textContent = levels[currentIndex];
+                        updateToppingsDisplay();
+                        updateStepIndicator(4);
+                    }
+                });
+            });
+            
+            // 糖度选择
+            document.querySelectorAll('.option-btn[data-sugar]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有激活状态
+                    document.querySelectorAll('.option-btn[data-sugar]').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // 添加当前激活状态
+                    this.classList.add('active');
+                    
+                    // 更新显示
+                    updateSugarIceDisplay();
+                    updateStepIndicator(5);
+                });
+            });
+            
+            // 冰度选择
+            document.querySelectorAll('.option-btn[data-ice]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有激活状态
+                    document.querySelectorAll('.option-btn[data-ice]').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // 添加当前激活状态
+                    this.classList.add('active');
+                    
+                    // 更新显示
+                    updateSugarIceDisplay();
+                    updateStepIndicator(5);
+                });
+            });
+            
+            // 奶茶命名
+            const nameInput = document.getElementById('milkTeaName');
+            nameInput.addEventListener('input', function() {
+                updateMilkTeaName();
+                updateStepIndicator(6);
+            });
+            
+            // 后缀选择
+            document.querySelectorAll('.suffix-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const suffix = this.getAttribute('data-suffix');
+                    const currentName = nameInput.value || '我的奶茶';
+                    nameInput.value = currentName + ' · ' + suffix;
+                    updateMilkTeaName();
+                    updateStepIndicator(6);
+                });
+            });
+            
+            // 应用推荐配方
+            document.getElementById('applyRecommendation').addEventListener('click', function() {
+                // 设置杯型
+                document.querySelectorAll('.cup-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.getAttribute('data-cup') === '中杯') {
+                        opt.classList.add('selected');
+                        document.getElementById('selectedCup').textContent = '中杯';
+                        document.getElementById('selectedCupDisplay').textContent = '中杯';
+                        document.getElementById('idCup').textContent = '中杯';
+                    }
+                });
+                
+                // 设置茶底
+                document.querySelectorAll('.slider-dot, .tea-option').forEach(el => {
+                    el.classList.remove('active');
+                });
+                document.querySelector('.slider-dot[data-tea="乌龙茶"]').classList.add('active');
+                document.querySelector('.tea-option[data-tea="乌龙茶"]').classList.add('active');
+                document.getElementById('selectedTea').textContent = '乌龙茶';
+                document.getElementById('selectedTeaDisplay').textContent = '乌龙茶';
+                document.getElementById('idTea').textContent = '乌龙茶';
+                
+                // 设置配料
+                document.querySelectorAll('.topping').forEach(topping => {
+                    const toppingName = topping.getAttribute('data-topping');
+                    const countDisplay = topping.querySelector('.topping-count');
+                    
+                    if (toppingName === '布丁') {
+                        countDisplay.textContent = '多';
+                    } else if (toppingName === '脆波波') {
+                        countDisplay.textContent = '少';
+                    } else {
+                        countDisplay.textContent = '无';
+                    }
+                });
+                updateToppingsDisplay();
+                
+                // 设置糖度冰度
+                document.querySelectorAll('.option-btn[data-sugar]').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-sugar') === '少糖') {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                document.querySelectorAll('.option-btn[data-ice]').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.getAttribute('data-ice') === '去冰') {
+                        btn.classList.add('active');
+                    }
+                });
+                
+                // 更新显示
+                updateSugarIceDisplay();
+                
+                // 设置名字
+                nameInput.value = '桂花牛乳茶 · 秋日限定款';
+                updateMilkTeaName();
+                
+                // 滚动到命名环节
+                document.getElementById('page6').scrollIntoView({behavior: 'smooth'});
+                
+                // 显示成功提示
+                const originalText = this.textContent;
+                this.textContent = '✓ 配方已应用！';
+                this.style.background = 'linear-gradient(to right, #2e8b57, #4a90e2)';
+                
+                setTimeout(() => {
+                    this.textContent = originalText;
+                    this.style.background = 'linear-gradient(to right, #ff6b8b, #ff8e53)';
+                }, 2000);
+            });
+            
+            // 分享按钮
+            document.getElementById('shareBtn').addEventListener('click', function() {
+                // 生成分享文案
+                const teaName = document.getElementById('fullMilkTeaName').textContent;
+                const personality = document.getElementById('personalityTag').textContent;
+                const milkTeaId = document.getElementById('milkTeaId').textContent;
+                
+                const shareText = `我刚在奶茶DIY工坊调了一杯「${teaName}」，被鉴定为「${personality}」！敢不敢复刻我的神仙配方？挑战链接：milktea-diy.com/share/MT${milkTeaId}`;
+                
+                // 模拟分享功能
+                if (navigator.share) {
+                    navigator.share({
+                        title: '我的奶茶身份证',
+                        text: shareText,
+                        url: window.location.href
+                    })
+                    .then(() => console.log('分享成功'))
+                    .catch(error => console.log('分享失败', error));
+                } else {
+                    // 如果不支持Web Share API，则复制到剪贴板
+                    navigator.clipboard.writeText(shareText)
+                        .then(() => {
+                            // 显示成功提示
+                            const originalText = this.innerHTML;
+                            this.innerHTML = '<i class="fas fa-check"></i> 已复制分享文案';
+                            this.style.background = 'linear-gradient(to right, #2e8b57, #4a90e2)';
+                            
+                            setTimeout(() => {
+                                this.innerHTML = originalText;
+                                this.style.background = 'linear-gradient(to right, #4a90e2, #2e8b57)';
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            console.error('复制失败: ', err);
+                            alert('分享文案：\n\n' + shareText);
+                        });
+                }
+            });
+        }
+        
+        // 更新配料显示
+        function updateToppingsDisplay() {
+            const toppings = document.querySelectorAll('.topping');
+            let toppingsText = '';
+            let toppingsShortText = '';
+            let toppingCount = 0;
+            
+            toppings.forEach(topping => {
+                const name = topping.getAttribute('data-topping');
+                const count = topping.querySelector('.topping-count').textContent;
+                
+                if (count !== '无') {
+                    if (toppingsText) toppingsText += '、';
+                    toppingsText += `${name}(${count})`;
+                    
+                    toppingCount++;
+                    if (toppingCount <= 2) {
+                        if (toppingsShortText) toppingsShortText += '、';
+                        toppingsShortText += `${name}(${count})`;
+                    }
+                }
+            });
+            
+            if (!toppingsText) {
+                toppingsText = '无配料';
+                toppingsShortText = '无配料';
+            } else if (toppingCount > 2) {
+                toppingsShortText += '等';
+            }
+            
+            document.getElementById('selectedToppings').textContent = toppingsText;
+            document.getElementById('selectedToppingsDisplay').textContent = toppingsShortText;
+            document.getElementById('idToppings').textContent = toppingsText;
+            
+            // 更新人格标签
+            updatePersonalityTag();
+        }
+        
+        // 更新糖度冰度显示
+        function updateSugarIceDisplay() {
+            const sugar = document.querySelector('.option-btn[data-sugar].active').getAttribute('data-sugar');
+            const ice = document.querySelector('.option-btn[data-ice].active').getAttribute('data-ice');
+            
+            const displayText = `糖度：${sugar}，冰度：${ice}`;
+            const shortDisplayText = `${sugar}/${ice}`;
+            const idText = `${sugar} / ${ice}`;
+            
+            document.getElementById('selectedSugarIce').textContent = displayText;
+            document.getElementById('selectedSugarIceDisplay').textContent = shortDisplayText;
+            document.getElementById('idSugarIce').textContent = idText;
+            
+            // 更新人格标签
+            updatePersonalityTag();
+        }
+        
+        // 更新奶茶名字显示
+        function updateMilkTeaName() {
+            const name = document.getElementById('milkTeaName').value || '未命名奶茶';
+            document.getElementById('fullMilkTeaName').textContent = name;
+            document.getElementById('idName').textContent = name;
+            
+            // 更新人格标签
+            updatePersonalityTag();
+        }
+        
+        // 更新步骤指示器
+        function updateStepIndicator(stepNumber) {
+            const steps = document.querySelectorAll('.step');
+            steps.forEach((step, index) => {
+                if (index + 1 <= stepNumber) {
+                    step.classList.add('active');
+                } else {
+                    step.classList.remove('active');
+                }
+            });
+        }
+        
+        // 更新人格标签
+        function updatePersonalityTag() {
+            // 根据选择组合生成人格标签
+            const cup = document.getElementById('selectedCup').textContent;
+            const tea = document.getElementById('selectedTea').textContent;
+            const sugar = document.querySelector('.option-btn[data-sugar].active').getAttribute('data-sugar');
+            
+            // 获取配料信息
+            const toppingsText = document.getElementById('selectedToppings').textContent;
+            const hasPearl = toppingsText.includes('珍珠');
+            const hasTaro = toppingsText.includes('芋圆');
+            
+            let personality = '奶茶探索家';
+            
+            // 根据多种条件组合判断
+            if (cup === 'U型杯' && tea === '红茶' && sugar === '正常糖') {
+                personality = '经典爱好者';
+            } else if (cup === '中杯' && tea === '绿茶' && sugar === '少糖') {
+                personality = '清新健康派';
+            } else if (cup === '大杯' && tea === '乌龙茶') {
+                personality = '品味鉴赏家';
+            } else if (sugar === '无糖') {
+                personality = '自律控糖者';
+            } else if (cup === 'U型杯') {
+                personality = '时尚弄潮儿';
+            } else if (hasPearl && hasTaro) {
+                personality = '配料狂热者';
+            } else if (tea === '绿茶' && sugar === '无糖') {
+                personality = '极简主义者';
+            }
+            
+            document.getElementById('personalityTag').textContent = personality;
+        }
+        
+        // 初始化滚动监听
+        function initScrollListener() {
+            const container = document.getElementById('mainContainer');
+            const progressBar = document.getElementById('progressBar');
+            const navDots = document.querySelectorAll('.nav-dot');
+            const sections = document.querySelectorAll('section');
+            
+            container.addEventListener('scroll', function() {
+                // 更新进度条
+                const scrollTop = container.scrollTop;
+                const scrollHeight = container.scrollHeight - container.clientHeight;
+                const scrollProgress = (scrollTop / scrollHeight) * 100;
+                progressBar.style.width = `${scrollProgress}%`;
+                
+                // 更新导航点
+                const currentScroll = container.scrollTop + container.clientHeight / 3;
+                
+                sections.forEach((section, index) => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    
+                    if (currentScroll >= sectionTop && currentScroll < sectionTop + sectionHeight) {
+                        navDots.forEach(dot => dot.classList.remove('active'));
+                        if (navDots[index]) {
+                            navDots[index].classList.add('active');
+                        }
+                        
+                        // 更新步骤指示器
+                        updateStepIndicator(index + 1);
+                    }
+                });
+            });
+        }
+        
+        // 生成随机奶茶ID
+        function generateMilkTeaId() {
+            const date = new Date();
+            const id = date.getFullYear().toString().substr(-2) + 
+                      (date.getMonth() + 1).toString().padStart(2, '0') + 
+                      date.getDate().toString().padStart(2, '0') +
+                      Math.floor(Math.random() * 100).toString().padStart(2, '0');
+            document.getElementById('milkTeaId').textContent = id;
+        }
+        
+        // 初始更新显示
+        updateToppingsDisplay();
+        updateSugarIceDisplay();
+        updateMilkTeaName();
+        updatePersonalityTag();
+        generateMilkTeaId();
+        
+        // 添加CSS动画
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+                40% {transform: translateY(-10px);}
+                60% {transform: translateY(-5px);}
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
