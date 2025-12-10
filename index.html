@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>奶茶DIY - 解锁你的隐藏奶茶人格</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -375,6 +376,10 @@
             font-size: 36px;
             margin-bottom: 8px;
             transition: transform 0.3s ease;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .topping:hover .topping-icon {
@@ -908,7 +913,7 @@
             <p class="section-subtitle">不同的杯型代表不同的奶茶态度，你属于哪一种？</p>
             
             <div class="cup-options">
-                <div class="cup-option" data-cup="u型">
+                <div class="cup-option" data-cup="U型杯">
                     <div class="cup-icon">🥤</div>
                     <h3>U型杯</h3>
                     <p>时尚达人必备</p>
@@ -992,7 +997,7 @@
             
             <div class="toppings-container">
                 <div class="topping" data-topping="珍珠">
-                    <div class="topping-icon">⚫</div>
+                    <div class="topping-icon"><img src="新建文件 · 武笑_mimi - Gitee.com_files\heiyang.png" alt="黑糖珍珠" class="topping-img" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px;"></div>
                     <h3>黑糖珍珠</h3>
                     <p>Q弹有嚼劲</p>
                     <div class="topping-controls">
@@ -1003,7 +1008,7 @@
                 </div>
                 
                 <div class="topping" data-topping="芋圆">
-                    <div class="topping-icon">🟣</div>
+                    <div class="topping-icon"><img src="YUYAN.png" alt="芋圆" class="topping-img" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px;"></div>
                     <h3>紫薯芋圆</h3>
                     <p>软糯香甜</p>
                     <div class="topping-controls">
@@ -1014,7 +1019,7 @@
                 </div>
                 
                 <div class="topping" data-topping="脆波波">
-                    <div class="topping-icon">⚪</div>
+                    <div class="topping-icon"><img src="CUIBOBO.png" alt="脆波波" class="topping-img" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px;"></div>
                     <h3>水晶脆波波</h3>
                     <p>爽脆口感</p>
                     <div class="topping-controls">
@@ -1025,7 +1030,7 @@
                 </div>
                 
                 <div class="topping" data-topping="椰果">
-                    <div class="topping-icon">🟡</div>
+                    <div class="topping-icon"><img src="YEGUO.png" alt="椰果" class="topping-img" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px;"></div>
                     <h3>黄金椰果</h3>
                     <p>清甜爽口</p>
                     <div class="topping-controls">
@@ -1036,8 +1041,8 @@
                 </div>
                 
                 <div class="topping" data-topping="布丁">
-                    <div class="topping-icon">🟠</div>
-                    <h3>焦糖布丁</h3>
+                    <div class="topping-icon"><img src="BUDING.png" alt="布丁" class="topping-img" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px;"></div>
+                    <h3>焦糖布丁</h3>c:\Users\W\Pictures\Screenshots\屏幕截图 2025-12-10 132410.png
                     <p>滑嫩香甜</p>
                     <div class="topping-controls">
                         <button class="topping-btn minus">-</button>
@@ -1047,7 +1052,7 @@
                 </div>
                 
                 <div class="topping" data-topping="奶盖">
-                    <div class="topping-icon">⬜</div>
+                    <div class="topping-icon"><img src="奶盖.png" alt="奶盖" class="topping-img" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px;"></div>
                     <h3>芝士奶盖</h3>
                     <p>咸香浓郁</p>
                     <div class="topping-controls">
@@ -1442,6 +1447,9 @@
                     const toppingName = topping.getAttribute('data-topping');
                     const countDisplay = topping.querySelector('.topping-count');
                     
+                    // 为推荐配方设置特定的配料数量
+                    // 注意：由于推荐配方中提到的是"桂花冻"，但我们的配料中没有这个选项
+                    // 所以我们将"布丁"设置为"多"，"脆波波"设置为"少"，其他配料设置为"无"
                     if (toppingName === '布丁') {
                         countDisplay.textContent = '多';
                     } else if (toppingName === '脆波波') {
